@@ -31,6 +31,13 @@ public:
 	//// end generated class members
 
 
+	wxString sourcePath = "";
+	wxString targetPath = "";
+	wxArrayString JPGfiles = wxArrayString();
+	wxArrayString BMPfiles = wxArrayString();
+	int JPGcount = 0;
+	int BMPcount = 0;
+	int compressionValue = 50;
 };
 
 #endif // __PhotoOrganizerFrame__
