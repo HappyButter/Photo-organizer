@@ -1,30 +1,81 @@
 #include "PhotoOrganizerFrame.h"
-#include <wx/wx.h>
-#include <wx/dir.h>
-#include <wx/string.h>
-#include <wx/filefn.h> 
-#include <string>
-#include "FreeImage.h"
 
-wxArrayString getAllFilesInDirWithExtension(const wxDir &dir, std::string extension) {
+const wxArrayString PhotoOrganizerFrame::getAllFilesInDirWithExtension(const wxDir &dir, const wxString extension) const
+{
 	wxString fileName;
 	wxArrayString files;
 	bool cont = dir.GetFirst(&fileName, extension, wxDIR_DEFAULT);
 	while (cont) {
-		//wxMessageBox(fileName.c_str());
 		files.Add(fileName);
 		cont = dir.GetNext(&fileName);
 	}
 	return files;
 }
 
-wxArrayString getAllDirectories(const wxDir& dir)
+void PhotoOrganizerFrame::copyAll_JPG(wxString& currPath, wxString& targetPath) const
 {
-	wxArrayString directories;
+	FIBITMAP* bitmap;
+	wxDir curr(currPath);
+	JPGfiles = getAllFilesInDirWithExtension(curr, "*.jpg");
+	
+	for (wxString jpgName : JPGfiles)
+	{
+		wxString pathToFile = currPath + '\\' + jpgName;
+		wxString pathToTarget = targetPath + '\\' + jpgName;
 
-	dir.GetAllFiles(dir.GetName(), &directories, wxEmptyString, wxDIR_DIRS);
+		bitmap = FreeImage_Load(FIF_JPEG, pathToFile, 0);
+		if (bitmap)
+		{
+			FreeImage_Save(FIF_JPEG, bitmap, pathToTarget, compressionValue);
+		}
+	}
+	wxMessageBox("Success JPG!");
+}
 
-	return directories;
+void PhotoOrganizerFrame::copyAll_PNG(wxString& currPath, wxString& targetPath) const
+{
+	FIBITMAP* bitmap;
+	wxDir curr(currPath);
+	PNGfiles = getAllFilesInDirWithExtension(curr, "*.png");
+
+	for (wxString pngName : PNGfiles)
+	{
+		wxString pathToFile = currPath + '\\' + pngName;
+		wxString pathToTarget = targetPath + '\\' + pngName;
+
+		bitmap = FreeImage_Load(FIF_PNG, pathToFile, 0);
+		if (bitmap)
+		{
+			FreeImage_Save(FIF_PNG, bitmap, pathToTarget);
+		}
+	}
+	wxMessageBox("Success PNG!");
+}
+
+void PhotoOrganizerFrame::cloneDir(wxString& currPath, wxString& targetPath) const
+{
+	wxArrayString subdirectories;
+	wxString dirName;
+	wxDir source(currPath);
+	wxDir target(targetPath);
+	
+	copyAll_JPG(currPath, targetPath);
+	copyAll_PNG(currPath, targetPath);
+
+	if (source.HasSubDirs())
+	{
+		bool cont = source.GetFirst(&dirName, wxEmptyString, wxDIR_DIRS);
+		while (cont)
+		{
+			subdirectories.Add(dirName);
+			wxMkdir(targetPath + '\\' + dirName);
+			cont = source.GetNext(&dirName);
+		}
+		for (wxString sub : subdirectories)
+		{
+			cloneDir(currPath + '\\' + sub, targetPath + '\\' + sub);
+		}
+	}
 }
 
 
@@ -41,13 +92,11 @@ void PhotoOrganizerFrame::m_loadFolderOnButtonClick(wxCommandEvent& event)
 	wxDirDialog dialog(this, wxT("Choose directory"), defaultPath, wxDD_NEW_DIR_BUTTON);
 	if (dialog.ShowModal() == wxID_OK) {
 		sourcePath = dialog.GetPath();
-		//wxMessageBox(sourcePath);
+		/*
 		wxDir dir(sourcePath);
 		if (dir.IsOpened()) {
 			JPGfiles = getAllFilesInDirWithExtension(dir, "*.jpg");
 			BMPfiles = getAllFilesInDirWithExtension(dir, "*.bmp");
-			JPGcount = JPGfiles.GetCount();
-			BMPcount = BMPfiles.GetCount();
 			//wxMessageBox(std::to_string(JPGcount));
 			//wxMessageBox(std::to_string(BMPcount));
 		}
@@ -63,6 +112,7 @@ void PhotoOrganizerFrame::m_loadFolderOnButtonClick(wxCommandEvent& event)
 				break;
 			}
 		}
+		*/
 	}
 
 }
@@ -109,38 +159,19 @@ void PhotoOrganizerFrame::m_folderNameOnText(wxCommandEvent& event)
 
 void PhotoOrganizerFrame::m_exportOnButtonClick(wxCommandEvent& event)
 {
-	FIBITMAP* bitmap;
 	wxString defaultPath = wxT("/");
 	wxDirDialog dialog(this, wxT("Choose directory"), defaultPath, wxDD_NEW_DIR_BUTTON);
 	
-	if (dialog.ShowModal() == wxID_OK) {
-		targetPath = dialog.GetPath();
-		wxDir dir(targetPath);
-		wxDir source(sourcePath);
+	if (dialog.ShowModal() == wxID_OK)
+	{
+		wxString targetPath = dialog.GetPath();
+		wxDir target(targetPath);
 
-		if (dir.IsOpened()) {
-			wxArrayString subdirectories;
-			wxString dirname;
-			bool cont = source.GetFirst(&dirname, wxEmptyString, wxDIR_DIRS);
-			while (cont)
-			{
-				subdirectories.Add(dirname);
-				wxMkdir(targetPath + '\\' + dirname);
-				cont = dir.GetNext(&dirname);
-			}
+		while (target.IsOpened())
+		{
+			cloneDir(sourcePath, targetPath);
 
-			for (int i = 0; i < JPGcount; i++)
-			{
-				wxString pathToFile = sourcePath + '\\' + JPGfiles.Item(i);
-				wxString pathToTarget = targetPath + '\\' + JPGfiles.Item(i);
-
-				bitmap = FreeImage_Load(FIF_JPEG, pathToFile, 0);
-				if (bitmap)
-				{
-					FreeImage_Save(FIF_JPEG, bitmap, pathToTarget, compressionValue);
-				}
-			}
-			wxMessageBox("Success!");
+			target.Close();
 		}
 	}
 }
