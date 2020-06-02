@@ -36,19 +36,22 @@ public:
 	PhotoOrganizerFrame(wxWindow* parent);
 	//// end generated class members
 
-	const wxArrayString getAllFilesInDirWithExtension(const wxDir& dir, const wxString extension) const;
 	void copyAll_JPG(wxString& currPath, wxString& targetPath) const;
 	void copyAll_PNG(wxString& currPath, wxString& targetPath) const;
 	void cloneDir(wxString& source, wxString& target) const;
+	const wxArrayString getAllFilesInDirWithExtension(const wxDir& dir, const wxString extension) const;
 
-	wxString sourcePath = "";
-	// wxString targetPath = "";
-	wxArrayString &JPGfiles = wxArrayString();
-	wxArrayString &BMPfiles = wxArrayString();
-	wxArrayString &PNGfiles = wxArrayString();
-	int JPGcount = 0;
 	int BMPcount = 0;
 	int compressionValue = 50;
+	int JPGcount = 0;
+	int maxWidth = m_maxWidthControl->GetValue();
+	int maxHeight = m_maxHeightControl->GetValue();
+
+	wxArrayString &BMPfiles = wxArrayString();
+	wxArrayString &JPGfiles = wxArrayString();
+	wxArrayString &PNGfiles = wxArrayString();
+
+	wxString sourcePath = "";
 };
 
 #endif // __PhotoOrganizerFrame__

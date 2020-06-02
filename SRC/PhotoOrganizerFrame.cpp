@@ -17,6 +17,9 @@ void PhotoOrganizerFrame::copyAll_JPG(wxString& currPath, wxString& targetPath) 
 	FIBITMAP* bitmap;
 	wxDir curr(currPath);
 	JPGfiles = getAllFilesInDirWithExtension(curr, "*.jpg");
+	int setWidth = maxHeight;
+	int setHeight = maxWidth;
+	double ratio = 4./3.;
 	
 	for (wxString jpgName : JPGfiles)
 	{
@@ -24,9 +27,30 @@ void PhotoOrganizerFrame::copyAll_JPG(wxString& currPath, wxString& targetPath) 
 		wxString pathToTarget = targetPath + '\\' + jpgName;
 
 		bitmap = FreeImage_Load(FIF_JPEG, pathToFile, 0);
+
+
 		if (bitmap)
 		{
+			ratio = FreeImage_GetWidth(bitmap) / double(FreeImage_GetHeight(bitmap));
+			if (FreeImage_GetWidth(bitmap) > maxWidth)
+			{
+				setWidth = maxWidth;
+				setHeight = setWidth / ratio;
+			}
+			else if (FreeImage_GetHeight(bitmap) > maxHeight)
+			{
+				setHeight = maxHeight;
+				setWidth = ratio * setHeight;
+			}
+			else
+			{
+				setHeight = maxHeight;
+				setWidth = maxWidth;
+			}
+
+			bitmap = FreeImage_Rescale(bitmap,  setWidth, setHeight);
 			FreeImage_Save(FIF_JPEG, bitmap, pathToTarget, compressionValue);
+			FreeImage_Unload(bitmap);
 		}
 	}
 	wxMessageBox("Success JPG!");
@@ -47,6 +71,7 @@ void PhotoOrganizerFrame::copyAll_PNG(wxString& currPath, wxString& targetPath) 
 		if (bitmap)
 		{
 			FreeImage_Save(FIF_JPEG, bitmap, pathToTarget, compressionValue);
+			FreeImage_Unload(bitmap);
 		}
 	}
 	wxMessageBox("Success PNG!");
