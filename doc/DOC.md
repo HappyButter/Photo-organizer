@@ -29,6 +29,9 @@ In the digital photography era, large numbers of photos are being stored on CDs/
 ## 4. Project analysis
 
 ## 5. Task delegation and project roadmap
+mikołaj - wx, wyświetlanie,
+krystian - wczytywanie, eksport, ratio
+michał - dokumentacja, konwersja, zapis
 
 ## 6. Invention and description of necessary algorithms
 
