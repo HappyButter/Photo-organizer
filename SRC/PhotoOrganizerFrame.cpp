@@ -59,7 +59,7 @@ void PhotoOrganizerFrame::copyAll_PNG(wxString& currPath, wxString& targetPath) 
 {
 	FIBITMAP* bitmap;
 	wxDir curr(currPath);
-	PNGfiles = getAllFilesInDirWithExtension(curr, "*.png");
+	PNGfiles = getAllFilesInDirWithExtension(curr, "*.png"); // !
 	int setWidth = maxWidth;
 	int setHeight = maxHeight;
 	double ratio = 4. / 3.;
@@ -69,7 +69,7 @@ void PhotoOrganizerFrame::copyAll_PNG(wxString& currPath, wxString& targetPath) 
 		wxString pathToFile = currPath + '\\' + pngName;
 		wxString pathToTarget = targetPath + '\\' + pngName;
 
-		bitmap = FreeImage_Load(FIF_PNG, pathToFile, 0);
+		bitmap = FreeImage_Load(FIF_PNG, pathToFile, 0); // !
 		if (bitmap)
 		{
 			ratio = FreeImage_GetWidth(bitmap) / double(FreeImage_GetHeight(bitmap));
@@ -94,7 +94,7 @@ void PhotoOrganizerFrame::copyAll_PNG(wxString& currPath, wxString& targetPath) 
 			FreeImage_Unload(bitmap);
 		}
 	}
-	wxMessageBox("Success PNG!");
+	wxMessageBox("Success PNG!"); // ?
 }
 
 void PhotoOrganizerFrame::cloneDir(wxString& currPath, wxString& targetPath) const
@@ -197,7 +197,7 @@ void PhotoOrganizerFrame::m_maxWidthControlOnTextEnter(wxCommandEvent& event)
 
 void PhotoOrganizerFrame::m_compressiomLevelOnSlider(wxCommandEvent& event)
 {
-	compressionValue = m_compressiomLevel->GetValue();
+	compressionValue = 100 - m_compressiomLevel->GetValue();
 }
 
 void PhotoOrganizerFrame::m_folderNameOnText(wxCommandEvent& event)
