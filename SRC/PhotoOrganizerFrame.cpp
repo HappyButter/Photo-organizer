@@ -167,32 +167,32 @@ void PhotoOrganizerFrame::m_loadFolderOnButtonClick(wxCommandEvent& event)
 
 void PhotoOrganizerFrame::m_maxHeightControlOnSpinCtrl(wxSpinEvent& event)
 {
-	// TODO: Implement m_maxHeightControlOnSpinCtrl
+	maxHeight = m_maxHeightControl->GetValue();
 }
 
 void PhotoOrganizerFrame::m_maxHeightControlOnSpinCtrlText(wxCommandEvent& event)
 {
-	// TODO: Implement m_maxHeightControlOnSpinCtrlText
+	// what does it do ??
 }
 
 void PhotoOrganizerFrame::m_maxHeightControlOnTextEnter(wxCommandEvent& event)
 {
-	// TODO: Implement m_maxHeightControlOnTextEnter
+	// what does it do ??
 }
 
 void PhotoOrganizerFrame::m_maxWidthControlOnSpinCtrl(wxSpinEvent& event)
 {
-	// TODO: Implement m_maxWidthControlOnSpinCtrl
+	maxWidth = m_maxWidthControl->GetValue();
 }
 
 void PhotoOrganizerFrame::m_maxWidthControlOnSpinCtrlText(wxCommandEvent& event)
 {
-	// TODO: Implement m_maxWidthControlOnSpinCtrlText
+	// what does it do ??
 }
 
 void PhotoOrganizerFrame::m_maxWidthControlOnTextEnter(wxCommandEvent& event)
 {
-	// TODO: Implement m_maxWidthControlOnTextEnter
+	// what does it do ??
 }
 
 void PhotoOrganizerFrame::m_compressiomLevelOnSlider(wxCommandEvent& event)
