@@ -47,6 +47,7 @@ protected:
 	wxCheckBox* m_checkBoxWidth;
 	wxCheckBox* m_checkBoxHeight;
 	wxCheckBox* m_checkBoxSemiAutomaticMode;
+	wxKeyEvent* m_key;
 
 
 	// Virtual event handlers, overide them in your derived class
@@ -63,4 +64,5 @@ protected:
 	virtual void m_isHeightBoxChecked(wxCommandEvent& event) { event.Skip(); }
 	virtual void m_isSemiAutomaticModeOn(wxCommandEvent& event) { event.Skip(); }
 	virtual void UpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
+
 };

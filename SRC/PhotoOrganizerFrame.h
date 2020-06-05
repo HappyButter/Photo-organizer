@@ -6,6 +6,10 @@
 #include <wx/dir.h>
 #include <wx/string.h>
 #include <wx/filefn.h> 
+#include <wx/image.h>
+#include <wx/bitmap.h>
+#include <wx/dcbuffer.h>
+#include <wx/event.h>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -28,18 +32,23 @@ protected:
 	void m_isSemiAutomaticModeOn(wxCommandEvent& event);
 	void m_isWidthBoxChecked(wxCommandEvent& event);
 	void m_isHeightBoxChecked(wxCommandEvent& event);
+	void UpdateUI(wxUpdateUIEvent& event);
 public:
-	/** Constructor */
 	PhotoOrganizerFrame(wxWindow* parent);
-	//// end generated class members
+	~PhotoOrganizerFrame();
 
 	const wxArrayString getAllFilesInDirWithExtension(const wxDir& dir, const wxString extension) const;
+	void Repaint();
 	void copyAllImages(wxString& currPath, wxString& targetPath);
 	void cloneDir(wxString& source, wxString& target);
 	int filesCounter(wxString& currPath) const;
 	bool isImageToCopyInsideFolder(wxString& currPath) const;
+	void OnKeyDown(wxKeyEvent& event);
+	void setSize(FIBITMAP* bitmap);
+	
 	wxString sourcePath = "";
 	wxString directionPath = "";
+	wxImage* m_image;
 
 	std::vector<std::string> m_extensions;
 	std::vector<FREE_IMAGE_FORMAT> m_formats;
@@ -49,5 +58,15 @@ public:
 	int compressionValue = 50;
 	int maxWidth = m_maxWidthControl->GetValue();
 	int maxHeight = m_maxHeightControl->GetValue();
+	int angle = 0;
+	int setHeight, setWidth;
+
+	double ratio = 4. / 3.;
+	
+
+	bool isEnterPressed = false;
+	bool isCustomWidth = m_checkBoxWidth->GetValue();
+	bool isCustomHeight = m_checkBoxHeight->GetValue();
+	bool isSemiAutomaticModeOn = m_checkBoxSemiAutomaticMode->GetValue();
 };
 

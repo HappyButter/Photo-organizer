@@ -76,6 +76,9 @@ PhotoOrganizer::PhotoOrganizer(wxWindow* parent, wxWindowID id, const wxString& 
 	bSizer11 = new wxBoxSizer(wxVERTICAL);
 
 
+	m_checkBoxSemiAutomaticMode = new wxCheckBox(this, wxID_ANY, wxT("Semi Automatic Mode"), wxDefaultPosition, wxDefaultSize, 0);
+	bSizer11->Add(m_checkBoxSemiAutomaticMode, 0, wxALIGN_CENTER | wxALL, 5);
+
 	m_export = new wxButton(this, wxID_ANY, wxT("Export"), wxDefaultPosition, wxSize(120, 40), 0);
 	m_export->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BACKGROUND));
 	m_export->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
@@ -92,8 +95,6 @@ PhotoOrganizer::PhotoOrganizer(wxWindow* parent, wxWindowID id, const wxString& 
 	m_progressBar->SetValue(0);
 	bSizer12->Add(m_progressBar, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, 20);
 
-	m_checkBoxSemiAutomaticMode = new wxCheckBox(this, wxID_ANY, wxT("Semi Automatic Mode"), wxDefaultPosition, wxDefaultSize, 0);
-	bSizer12->Add(m_checkBoxSemiAutomaticMode, 0, wxALIGN_CENTER | wxALL, 5);
 
 	bSizer7->Add(bSizer12, 1, wxEXPAND, 5);
 
@@ -135,6 +136,7 @@ PhotoOrganizer::PhotoOrganizer(wxWindow* parent, wxWindowID id, const wxString& 
 	m_export->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PhotoOrganizer::m_exportOnButtonClick), NULL, this);
 	m_checkBoxSemiAutomaticMode->Connect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PhotoOrganizer::m_isSemiAutomaticModeOn), NULL, this);
 	Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PhotoOrganizer::UpdateUI));
+
 }
 
 PhotoOrganizer::~PhotoOrganizer()
@@ -153,4 +155,5 @@ PhotoOrganizer::~PhotoOrganizer()
 	m_export->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PhotoOrganizer::m_exportOnButtonClick), NULL, this);
 	m_checkBoxSemiAutomaticMode->Disconnect(wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler(PhotoOrganizer::m_isSemiAutomaticModeOn), NULL, this);
 	Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PhotoOrganizer::UpdateUI));
+
 }
