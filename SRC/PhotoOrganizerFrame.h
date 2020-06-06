@@ -47,6 +47,7 @@ protected:
 	void OnKeyDown(wxKeyEvent& event);
 	bool isImageToCopyInsideFolder(wxString& currPath) const;
 	int filesCounter(wxString& currPath) const;
+	void addImageToContactSheet(FIBITMAP* contactSheet, FIBITMAP* bitmap , int& widthIndex, int& heightIndex);
 
 private:
 	wxString sourcePath = "";
@@ -57,13 +58,13 @@ private:
 	std::vector<std::string> m_extensions;
 	std::vector<FREE_IMAGE_FORMAT> m_formats;
 
+	int contactSheetCount = 1;
 	int m_filesCount = 0;
 	int m_filesCompressionCounter = 0;
 	int compressionValue = 50;
 	int maxWidth = m_maxWidthControl->GetValue();
 	int maxHeight = m_maxHeightControl->GetValue();
 	int angle = 0;
-	int setHeight, setWidth;
 
 	double ratio = 4. / 3.;
 

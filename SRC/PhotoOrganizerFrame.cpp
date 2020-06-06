@@ -95,7 +95,6 @@ void PhotoOrganizerFrame::Repaint()
 	}
 }
 
-
 const wxArrayString PhotoOrganizerFrame::getAllFilesInDirWithExtension(const wxDir& dir, const wxString extension) const
 {
 	wxString fileName;
@@ -108,15 +107,23 @@ const wxArrayString PhotoOrganizerFrame::getAllFilesInDirWithExtension(const wxD
 	return files;
 }
 
-
 void PhotoOrganizerFrame::copyAllImages(wxString& currPath, wxString& targetPath)
 {
 	int index = 0;
-	double customRatio;
+	int setWidth = maxWidth;
+	int setHeight = maxHeight;
+	int filesInDir = 0;
+	int widthIndex = 0;
+	int heightIndex = 0;
+	double ratio = 4. / 3.;
+
 	wxArrayString& files = wxArrayString();
+	FIBITMAP* contactSheet = FreeImage_Allocate(720, 1024, 24);
 	FIBITMAP* bitmap;
 	FIBITMAP* bitmapRescaled;
 	wxDir curr(currPath);
+	wxString pathToFile = currPath;
+	wxString pathToTarget = targetPath;
 
 	for (const auto& format : m_extensions)
 	{
@@ -124,13 +131,18 @@ void PhotoOrganizerFrame::copyAllImages(wxString& currPath, wxString& targetPath
 		
 		for (wxString name : files)
 		{
-			wxString pathToFile = currPath + '\\' + name;
-			wxString pathToTarget = targetPath + '\\' + name;
-
+			pathToFile = currPath + '\\' + name;
+			pathToTarget = targetPath + '\\' + name;
 			bitmap = FreeImage_Load(m_formats[index], pathToFile, 0);
 			if (bitmap)
 			{
 				ratio = (double)FreeImage_GetWidth(bitmap) / (double)(FreeImage_GetHeight(bitmap));
+
+				if (filesInDir == 40)
+					filesInDir = 0;
+				widthIndex = filesInDir % 5;
+				heightIndex = filesInDir / 5;
+				addImageToContactSheet(contactSheet, bitmap, widthIndex, heightIndex);
 
 				if (isSemiAutomaticModeOn)
 				{
@@ -177,6 +189,7 @@ void PhotoOrganizerFrame::copyAllImages(wxString& currPath, wxString& targetPath
 				FreeImage_Unload(bitmap);
 				FreeImage_Unload(bitmapRescaled);
 
+				filesInDir++;
 				m_filesCompressionCounter++;
 				m_progressBar->SetValue((int)((m_filesCompressionCounter * 100) / m_filesCount));
 			}	
@@ -185,6 +198,9 @@ void PhotoOrganizerFrame::copyAllImages(wxString& currPath, wxString& targetPath
 	}
 	m_filesCompressionCounter = 0;
 	m_progressBar->SetValue(0);
+	if(filesInDir != 0)
+		FreeImage_Save(FIF_JPEG, contactSheet, targetPath + '\\' + "ContactSheet_0.jpg", compressionValue);
+	FreeImage_Unload(contactSheet);
 }
 
 bool PhotoOrganizerFrame::isImageToCopyInsideFolder(wxString& currPath) const
@@ -223,7 +239,6 @@ bool PhotoOrganizerFrame::isImageToCopyInsideFolder(wxString& currPath) const
 	return false;
 }
 
-
 void PhotoOrganizerFrame::cloneDir(wxString& currPath, wxString& targetPath)
 {
 	wxArrayString subdirectories;
@@ -250,7 +265,6 @@ void PhotoOrganizerFrame::cloneDir(wxString& currPath, wxString& targetPath)
 			cloneDir(currPath + '\\' + sub, targetPath + '\\' + sub);
 	}
 }
-
 
 int PhotoOrganizerFrame::filesCounter(wxString& currPath) const
 {
@@ -284,6 +298,62 @@ int PhotoOrganizerFrame::filesCounter(wxString& currPath) const
 	return counter;
 }
 
+void PhotoOrganizerFrame::addImageToContactSheet(FIBITMAP* contactSheet, FIBITMAP* bitmap, int& widthIndex, int& heightIndex)
+{
+	FIBITMAP* bitmapNew;
+	FIBITMAP* bitmapRescaled;
+
+	int setWidth = 144;
+	int setHeight = 128;
+	std::vector<int> leftPositions = { 0, 144, 288, 432, 576 };
+	std::vector<int> topPositions = { 0, 128, 256, 384, 512, 640, 768, 896};
+	double ratio = 144. / 128.;
+
+	bitmapNew = FreeImage_Allocate(144, 128, 24);
+
+	ratio = FreeImage_GetWidth(bitmap) / double(FreeImage_GetHeight(bitmap));
+	if (FreeImage_GetWidth(bitmap) > setWidth || FreeImage_GetHeight(bitmap) > setHeight)
+	{
+		if (FreeImage_GetWidth(bitmap) > FreeImage_GetHeight(bitmap))
+			setHeight = setWidth / ratio;
+		else
+			setWidth = setHeight * ratio;
+	}
+	else
+	{
+		setHeight = FreeImage_GetHeight(bitmap);
+		setWidth = FreeImage_GetWidth(bitmap);
+	}
+	
+	bitmapRescaled = FreeImage_Rescale(bitmap, setWidth, setHeight);
+	if (bitmapRescaled)
+	{
+		FreeImage_Paste(bitmapNew, bitmapRescaled, (144 - setWidth) / 2, (128 - setHeight) / 2, 256);
+		if (bitmapNew)
+			FreeImage_Paste(contactSheet, bitmapNew, leftPositions[widthIndex], topPositions[heightIndex], 256);
+		else
+		{
+			wxMessageBox("not new");
+		}
+	}
+	else
+	{
+		wxMessageBox("not rescaled");
+	}
+	if (widthIndex == 4 && heightIndex == 7)
+	{
+		wxString filename;
+		wxString sheetCountString = wxString::Format(wxT("%i"), contactSheetCount);
+		filename = "ContactSheet_" + sheetCountString + ".jpg";
+		contactSheetCount++;
+		wxMessageBox(filename);
+		FreeImage_Save(FIF_JPEG, contactSheet, directionPath + '\\' + filename, compressionValue);
+		contactSheet = FreeImage_Allocate(720, 1024, 24);
+	}
+
+	FreeImage_Unload(bitmapNew);
+	FreeImage_Unload(bitmapRescaled);
+}
 
 void PhotoOrganizerFrame::m_loadFolderOnButtonClick(wxCommandEvent& event)
 {
@@ -305,10 +375,10 @@ void PhotoOrganizerFrame::m_loadFolderOnButtonClick(wxCommandEvent& event)
 		{
 			m_filesCompressionCounter = 0;
 			m_progressBar->SetValue((int)((m_filesCompressionCounter * 100)/m_filesCount));
+			
 		}
 	}
 }
-
 
 void PhotoOrganizerFrame::m_exportOnButtonClick(wxCommandEvent& event)
 {
