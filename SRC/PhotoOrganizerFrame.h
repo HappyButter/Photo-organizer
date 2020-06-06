@@ -10,6 +10,7 @@
 #include <wx/bitmap.h>
 #include <wx/dcbuffer.h>
 #include <wx/event.h>
+#include <wx/utils.h> 
 #include <iostream>
 #include <string>
 #include <vector>
@@ -18,6 +19,11 @@
 /** Implementing Frame */
 class PhotoOrganizerFrame : public PhotoOrganizer
 {
+public:
+	PhotoOrganizerFrame(wxWindow* parent);
+	~PhotoOrganizerFrame();
+
+
 protected:
 	// Handlers for Frame events.
 	void m_loadFolderOnButtonClick(wxCommandEvent& event);
@@ -33,22 +39,20 @@ protected:
 	void m_isWidthBoxChecked(wxCommandEvent& event);
 	void m_isHeightBoxChecked(wxCommandEvent& event);
 	void UpdateUI(wxUpdateUIEvent& event);
-public:
-	PhotoOrganizerFrame(wxWindow* parent);
-	~PhotoOrganizerFrame();
+	void Repaint();
 
 	const wxArrayString getAllFilesInDirWithExtension(const wxDir& dir, const wxString extension) const;
-	void Repaint();
 	void copyAllImages(wxString& currPath, wxString& targetPath);
 	void cloneDir(wxString& source, wxString& target);
-	int filesCounter(wxString& currPath) const;
-	bool isImageToCopyInsideFolder(wxString& currPath) const;
 	void OnKeyDown(wxKeyEvent& event);
-	void setSize(FIBITMAP* bitmap);
-	
+	bool isImageToCopyInsideFolder(wxString& currPath) const;
+	int filesCounter(wxString& currPath) const;
+
+private:
 	wxString sourcePath = "";
 	wxString directionPath = "";
 	wxImage* m_image;
+
 
 	std::vector<std::string> m_extensions;
 	std::vector<FREE_IMAGE_FORMAT> m_formats;
@@ -62,11 +66,11 @@ public:
 	int setHeight, setWidth;
 
 	double ratio = 4. / 3.;
-	
 
 	bool isEnterPressed = false;
 	bool isCustomWidth = m_checkBoxWidth->GetValue();
 	bool isCustomHeight = m_checkBoxHeight->GetValue();
 	bool isSemiAutomaticModeOn = m_checkBoxSemiAutomaticMode->GetValue();
+
 };
 

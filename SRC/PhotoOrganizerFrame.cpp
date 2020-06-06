@@ -22,8 +22,10 @@ void PhotoOrganizerFrame::UpdateUI(wxUpdateUIEvent& event)
 
 void PhotoOrganizerFrame::OnKeyDown(wxKeyEvent& event)
 {
+	wxMessageBox("Out Key '%c'", event.GetUnicodeKey());
 	if(isSemiAutomaticModeOn)
 	{
+		wxMessageBox("Key '%c'", event.GetUnicodeKey());
 		switch ((int)event.GetKeyCode()){
 		case 316:
 			angle += 1;
@@ -84,6 +86,7 @@ void PhotoOrganizerFrame::Repaint()
 			drawImageWidth = boxWitdth;
 			drawImageHeight = boxHeight;
 		}
+
 		tmp.Rescale(drawImageWidth, drawImageHeight);
 		
 		wxBitmap imgBitmap(tmp);
@@ -105,55 +108,11 @@ const wxArrayString PhotoOrganizerFrame::getAllFilesInDirWithExtension(const wxD
 	return files;
 }
 
-void PhotoOrganizerFrame::setSize(FIBITMAP* bitmap)
-{
-	if (isCustomHeight && isCustomWidth)
-	{
-		wxMessageBox("isCustomHeight && isCustomWidth");
-		double customRatio = maxWidth / maxHeight;
-		if (customRatio > ratio)
-		{
-			setHeight = maxHeight;
-			setWidth = ratio * setHeight;
-		}
-		else if (customRatio < ratio)
-		{
-			setWidth = maxWidth;
-			setHeight = setWidth / ratio;
-		}
-		else
-		{
-			setWidth = maxWidth;
-			setHeight = maxHeight;
-		}
-	}
-	else if (isCustomHeight)
-	{
-		wxMessageBox("isCustomHeight");
-		setHeight = maxHeight;
-		setWidth = ratio * setHeight;
-	}
-	else if (isCustomWidth)
-	{
-		wxMessageBox("isCustomWidth");
-		setWidth = maxWidth;
-		setHeight = setWidth / ratio;
-	}
-	else
-	{
-		wxMessageBox("None of above");
-		setHeight = FreeImage_GetHeight(bitmap);
-		setWidth = FreeImage_GetWidth(bitmap);
-	}
-}
 
 void PhotoOrganizerFrame::copyAllImages(wxString& currPath, wxString& targetPath)
 {
 	int index = 0;
-	int setWidth = maxWidth;
-	int setHeight = maxHeight;
 	double customRatio;
-
 	wxArrayString& files = wxArrayString();
 	FIBITMAP* bitmap;
 	FIBITMAP* bitmapRescaled;
@@ -162,28 +121,61 @@ void PhotoOrganizerFrame::copyAllImages(wxString& currPath, wxString& targetPath
 	for (const auto& format : m_extensions)
 	{
 		files = getAllFilesInDirWithExtension(curr, format);
-		int size = files.size();
-
-		for (int i = 0; i<size; )
+		
+		for (wxString name : files)
 		{
-			wxString pathToFile = currPath + '\\' + files[i];
-			wxString pathToTarget = targetPath + '\\' + files[i];
+			wxString pathToFile = currPath + '\\' + name;
+			wxString pathToTarget = targetPath + '\\' + name;
 
 			bitmap = FreeImage_Load(m_formats[index], pathToFile, 0);
 			if (bitmap)
 			{
 				ratio = (double)FreeImage_GetWidth(bitmap) / (double)(FreeImage_GetHeight(bitmap));
-				
+
 				if (isSemiAutomaticModeOn)
 				{
 					m_image->LoadFile(pathToFile, wxBITMAP_TYPE_ANY);
 					Repaint();
 				}
+				if (isCustomHeight && isCustomWidth)
+				{
+					double customRatio = maxWidth / maxHeight;
+					if (customRatio > ratio)
+					{
+						setHeight = maxHeight;
+						setWidth = ratio * setHeight;
+					}
+					else if (customRatio < ratio)
+					{
+						setWidth = maxWidth;
+						setHeight = setWidth / ratio;
+					}
+					else
+					{
+						setWidth = maxWidth;
+						setHeight = maxHeight;
+					}
+				}
+				else if (isCustomHeight && !isCustomWidth)
+				{
+					setHeight = maxHeight;
+					setWidth = ratio * setHeight;
+				}
+				else if (isCustomWidth && !isCustomHeight)
+				{
+					setWidth = maxWidth;
+					setHeight = setWidth / ratio;
+				}
+				else
+				{
+					setHeight = FreeImage_GetHeight(bitmap);
+					setWidth = FreeImage_GetWidth(bitmap);
+				}
 
-				//bitmapRescaled = FreeImage_Rescale(bitmap, setWidth, setHeight);
-				//FreeImage_Save(FIF_JPEG, bitmapRescaled, pathToTarget, compressionValue);
+				bitmapRescaled = FreeImage_Rescale(bitmap, setWidth, setHeight);
+				FreeImage_Save(FIF_JPEG, bitmapRescaled, pathToTarget, compressionValue);
 				FreeImage_Unload(bitmap);
-				//FreeImage_Unload(bitmapRescaled);
+				FreeImage_Unload(bitmapRescaled);
 
 				m_filesCompressionCounter++;
 				m_progressBar->SetValue((int)((m_filesCompressionCounter * 100) / m_filesCount));
@@ -278,9 +270,7 @@ int PhotoOrganizerFrame::filesCounter(wxString& currPath) const
 		}
 
 		for (wxString sub : subdirectories)
-		{
 			counter += filesCounter(currPath + '\\' + sub);
-		}
 	}
 
 	// counting images
@@ -299,25 +289,29 @@ void PhotoOrganizerFrame::m_loadFolderOnButtonClick(wxCommandEvent& event)
 {
 	wxString defaultPath = wxT("/");
 	wxDirDialog dialog(this, wxT("Choose directory"), defaultPath, wxDD_NEW_DIR_BUTTON);
-	if (dialog.ShowModal() == wxID_OK) {
+	if (dialog.ShowModal() == wxID_OK) 
+	{
 		sourcePath = dialog.GetPath();
 		wxDir curr(sourcePath);
-
-		m_filesCompressionCounter = 0;
+		
 		m_filesCount = filesCounter(sourcePath);
 
-		wxMessageBox(std::to_string(m_filesCount));
 		if (m_filesCount == 0)
-			m_filesCount = 1;
-		m_progressBar->SetValue((int)((m_filesCompressionCounter * 100)/m_filesCount));
+		{
+			wxMessageBox("No images to be converted. Pick Folder with images!");
+			sourcePath = "";
+		}
+		else
+		{
+			m_filesCompressionCounter = 0;
+			m_progressBar->SetValue((int)((m_filesCompressionCounter * 100)/m_filesCount));
+		}
 	}
 }
 
 
 void PhotoOrganizerFrame::m_exportOnButtonClick(wxCommandEvent& event)
 {
-
-
 	wxString defaultPath = wxT("/");
 	wxDirDialog dialog(this, wxT("Choose directory"), defaultPath, wxDD_NEW_DIR_BUTTON);
 
@@ -326,14 +320,15 @@ void PhotoOrganizerFrame::m_exportOnButtonClick(wxCommandEvent& event)
 		wxString targetPath = dialog.GetPath();
 		wxDir target(targetPath);
 		directionPath = targetPath;
-
+		bool wasOpened = target.IsOpened();
 		while (target.IsOpened() && directionPath != sourcePath )
 		{
 			cloneDir(sourcePath, targetPath);
 			target.Close();
 		}
+		if (wasOpened)
+			wxMessageBox("Images conversion completed!");
 	}
-	wxMessageBox("Done :)");
 }
 
 void PhotoOrganizerFrame::m_maxHeightControlOnSpinCtrl(wxSpinEvent& event)
@@ -371,21 +366,17 @@ void PhotoOrganizerFrame::m_compressiomLevelOnSlider(wxCommandEvent& event)
 	compressionValue = 100 - m_compressiomLevel->GetValue();
 }
 
-
 void PhotoOrganizerFrame::m_isHeightBoxChecked(wxCommandEvent& event)
 {
 	isCustomHeight = m_checkBoxHeight->GetValue();
 }
-
 
 void PhotoOrganizerFrame::m_isWidthBoxChecked(wxCommandEvent& event)
 {
 	isCustomWidth = m_checkBoxWidth->GetValue();
 }
 
-
 void PhotoOrganizerFrame::m_isSemiAutomaticModeOn(wxCommandEvent& event)
 {
 	isSemiAutomaticModeOn = m_checkBoxSemiAutomaticMode->GetValue();
 }
-
