@@ -109,7 +109,7 @@ PhotoOrganizer::PhotoOrganizer(wxWindow* parent, wxWindowID id, const wxString& 
 
 	m_panel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(600, 600), wxTAB_TRAVERSAL);
 	m_panel->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWFRAME));
-	m_panel->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWFRAME));
+
 
 	bSizer3->Add(m_panel, 1, wxEXPAND | wxALL, 5);
 

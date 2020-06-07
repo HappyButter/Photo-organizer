@@ -42,36 +42,46 @@ protected:
 	void Repaint();
 
 	const wxArrayString getAllFilesInDirWithExtension(const wxDir& dir, const wxString extension) const;
-	void copyAllImages(wxString& currPath, wxString& targetPath);
+
+	
+	void addImageToContactSheet(FIBITMAP* contactSheet, FIBITMAP* bitmap, int& widthIndex, int& heightIndex);
+
+	
+	/*	NEW BEGINNING  */
+	void copyAllImages(wxString& currPath, wxString& targetPath); // zostawiam tylko dla Micha³a; usunac po zrobieniu stykowek
+
+	void getFilesPaths(const wxDir& dir);
+	void Go_To_Next_Frame();
+	void saveOneImage(int index);
 	void cloneDir(wxString& source, wxString& target);
 	void OnKeyDown(wxKeyEvent& event);
 	bool isImageToCopyInsideFolder(wxString& currPath) const;
-	int filesCounter(wxString& currPath) const;
-	void addImageToContactSheet(FIBITMAP* contactSheet, FIBITMAP* bitmap , int& widthIndex, int& heightIndex);
-
 private:
+	/*	NEW BEGINNING  */
+
+	wxArrayString& m_imagesPathArray = wxArrayString();
+	std::vector<FREE_IMAGE_FORMAT> m_imagesFromats = {};
+	std::vector<std::string> m_extensions;
+	std::vector<FREE_IMAGE_FORMAT> m_formats;
 	wxString sourcePath = "";
 	wxString directionPath = "";
 	wxImage* m_image;
 
 
-	std::vector<std::string> m_extensions;
-	std::vector<FREE_IMAGE_FORMAT> m_formats;
-
-	int contactSheetCount = 1;
-	int m_filesCount = 0;
-	int m_filesCompressionCounter = 0;
+	int m_imagesCounter = 0;
+	int m_imagesLoaded = 0;
 	int compressionValue = 50;
 	int maxWidth = m_maxWidthControl->GetValue();
 	int maxHeight = m_maxHeightControl->GetValue();
 	int angle = 0;
-
+	int contactSheetCount = 1;
+	
 	double ratio = 4. / 3.;
 
-	bool isEnterPressed = false;
 	bool isCustomWidth = m_checkBoxWidth->GetValue();
 	bool isCustomHeight = m_checkBoxHeight->GetValue();
 	bool isSemiAutomaticModeOn = m_checkBoxSemiAutomaticMode->GetValue();
+	bool m_isLoadingImages = false;
 
+	/*  OLD STUFF*/
 };
-
