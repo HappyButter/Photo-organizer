@@ -39,7 +39,7 @@ protected:
 	wxSpinCtrl* m_maxWidthControl;
 	wxStaticText* m_staticText4;
 	wxStaticText* m_staticText5;
-	wxSlider* m_compressiomLevel;
+	wxSlider* m_compressionLevel;
 	wxStaticText* m_staticText8;
 	wxButton* m_export;
 	wxGauge* m_progressBar;
@@ -49,20 +49,17 @@ protected:
 	wxCheckBox* m_checkBoxSemiAutomaticMode;
 	wxKeyEvent* m_key;
 
-
-	// Virtual event handlers, overide them in your derived class
-	virtual void m_loadFolderOnButtonClick(wxCommandEvent& event) { event.Skip(); }
-	virtual void m_maxHeightControlOnSpinCtrl(wxSpinEvent& event) { event.Skip(); }
-	virtual void m_maxHeightControlOnSpinCtrlText(wxCommandEvent& event) { event.Skip(); }
-	virtual void m_maxHeightControlOnTextEnter(wxCommandEvent& event) { event.Skip(); }
-	virtual void m_maxWidthControlOnSpinCtrl(wxSpinEvent& event) { event.Skip(); }
-	virtual void m_maxWidthControlOnSpinCtrlText(wxCommandEvent& event) { event.Skip(); }
-	virtual void m_maxWidthControlOnTextEnter(wxCommandEvent& event) { event.Skip(); }
-	virtual void m_compressiomLevelOnSlider(wxCommandEvent& event) { event.Skip(); }
-	virtual void m_exportOnButtonClick(wxCommandEvent& event) { event.Skip(); }
-	virtual void m_isWidthBoxChecked(wxCommandEvent& event) { event.Skip(); }
-	virtual void m_isHeightBoxChecked(wxCommandEvent& event) { event.Skip(); }
-	virtual void m_isSemiAutomaticModeOn(wxCommandEvent& event) { event.Skip(); }
-	virtual void UpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
-
+	virtual void e_LoadFolderOnButtonClick(wxCommandEvent& event) { event.Skip(); }
+	virtual void e_ExportOnButtonClick(wxCommandEvent& event) { event.Skip(); }
+	virtual void e_UpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
+	virtual void e_WidthOnCheck(wxCommandEvent& event) { event.Skip(); }
+	virtual void e_HeightOnCheck(wxCommandEvent& event) { event.Skip(); }
+	virtual void e_SemiAutomaticModeOnCheck(wxCommandEvent& event) { event.Skip(); }
+	virtual void e_MaxHeightControlOnSpinCtrl(wxSpinEvent& event) { event.Skip(); }
+	virtual void e_MaxHeightControlOnSpinCtrlText(wxCommandEvent& event) { event.Skip(); }
+	virtual void e_MaxHeightControlOnTextEnter(wxCommandEvent& event) { event.Skip(); }
+	virtual void e_MaxWidthControlOnSpinCtrl(wxSpinEvent& event) { event.Skip(); }
+	virtual void e_MaxWidthControlOnSpinCtrlText(wxCommandEvent& event) { event.Skip(); }
+	virtual void e_MaxWidthControlOnTextEnter(wxCommandEvent& event) { event.Skip(); }
+	virtual void e_CompressionLevelOnSlider(wxCommandEvent& event) { event.Skip(); }
 };
