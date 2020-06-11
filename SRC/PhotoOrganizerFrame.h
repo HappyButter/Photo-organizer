@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "PhotoOrganizer.h"
 
 //// end generated include
@@ -43,22 +43,18 @@ protected:
 
 	void m_Repaint();
 	void m_GetFilesPaths(const wxDir& dir);
-	void m_AddImageToContactSheet(FIBITMAP* contactSheet, FIBITMAP* bitmap, int& widthIndex, int& heightIndex);
+	const wxArrayString m_GetAllFilesInDirWithExtension(const wxDir& dir, const wxString extension) const;
 	void m_GoToNextFrame();
 	void m_SaveOneImage(int index);
+	void m_AddImageToContactSheet(FIBITMAP* contactSheet, FIBITMAP* bitmap, int& widthIndex, int& heightIndex);
 	void m_CloneDir(wxString& source, wxString& target);
-	void m_CopyAllImages(wxString& currPath, wxString& targetPath); // zostawiam tylko dla Micha³a; usunac po zrobieniu stykowek
-
 	bool m_IsImageToCopyInsideFolder(wxString& currPath) const;
 
-	const wxArrayString m_GetAllFilesInDirWithExtension(const wxDir& dir, const wxString extension) const;
-private:
-	
+private:	
 	const std::vector<std::string> c_extensions = { "*.png", "*.jpg", "*.raw", "*.bmp", "*.tiff" };
 	const std::vector<FREE_IMAGE_FORMAT> c_formats = { FIF_PNG, FIF_JPEG, FIF_RAW, FIF_BMP, FIF_TIFF };
 
 	std::vector<FREE_IMAGE_FORMAT> m_loadedImagesFormats = {};
-
 	wxArrayString& m_imagesPathArray = wxArrayString();
 	
 	wxString m_sourcePath = "";
