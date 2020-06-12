@@ -110,9 +110,9 @@ Updates the interface, calls Repaint().<br>
 ##### void e_OnKeyDown(wxKeyEvent& event)
 Gets user input in semi-automatic mode. Left Arrow - rotate left, Right Arrow - rotate right, Enter - save image.<br>
 ##### void e_WidthOnCheck(wxCommandEvent& event)
-Checks if width constraint is on, if not the checkbox is blocked.
+Checks if width constraint is on, if not the text field is blocked.
 ##### void e_HeightOnCheck(wxCommandEvent& event)
-Checks if height constraint is on, if not the checkbox is blocked.
+Checks if height constraint is on, if not the text field is blocked.
 ##### void e_SemiAutomaticModeOnCheck(wxCommandEvent& event)
 Checks if semi-automatic mode is on, if not the checkbox is blocked.
 ### Functions controlling size constraints for thumbnails:
@@ -130,20 +130,19 @@ Sets compression level with value of the slider.
 Repaints the image updating wxPanel.
 ##### void m_GetFilesPaths(const wxDir& dir)
 Saves image paths from directory to m_imagePathsArray and corresponding file extensions to m_loadedImagesFormats.
-##### void m_AddImageToContactSheet(FIBITMAP* contactSheet, FIBITMAP* bitmap, int& widthIndex, int& heightIndex)
-Adds an image to contact sheet.
+##### const wxArrayString m_GetAllFilesInDirWithExtension(const wxDir& dir, const wxString extension) const
+Returns all the files within a directory with the extension passed as an argument.
 ##### void m_GoToNextFrame()
 Loads an image to the display and calls m_Repaint(), if there are no more images clears the display and sets a flag to false for the program to end.
 ##### void m_SaveOneImage(int index)
 Saves a single rescaled image to target directory. 
+##### void m_AddImageToContactSheet(FIBITMAP* contactSheet, FIBITMAP* bitmap, int& widthIndex, int& heightIndex)
+Adds an image to contact sheet.
 ##### void m_CloneDir(wxString& source, wxString& target)
 Creates contact sheets in each directory.<br>
 Traverses through source directory tree, copying the subdirectories to target tree using both iteration and recursion.
-
 ##### bool m_IsImageToCopyInsideFolder(wxString& currPath) const
 Checks for presence of images in supported formats in a directory using both iteration and recursion.
-##### const wxArrayString m_GetAllFilesInDirWithExtension(const wxDir& dir, const wxString extension) const
-Returns all the files within a directory with the extension passed as an argument.
 
 ---
 ## 8. Testing ##
