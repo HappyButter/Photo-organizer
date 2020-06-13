@@ -12,14 +12,14 @@
 
 ---
 ## 2. Project description ##
-   In the digital photography era, large numbers of photos are being stored on CDs/DVDs. Reorganization of such an archive, especially one consisting of a sizeable number of disks, can be challenging. The aim of the project is to provide an application which will recreate directory structure based on the contents of a CD or DVD, and complete it with thumbnails of the original photos. Aggregation of all the thumbnails in one place will help the user manage their collection.
+   In the digital photography era, large numbers of photos are being stored on CDs/DVDs. Reorganization of such an archive, especially one consisting of a sizable number of disks, can be challenging. The aim of the project is to provide an application which will recreate directory structure based on the contents of a CD or DVD, and complete it with thumbnails of the original photos. Aggregation of all the thumbnails in one place will help the user manage their collection.
 
 ---
 ## 3. Preliminary assumptions for project realisation ##
    #### Basic functionality: #### 
    * Program allows for picking a source CD/DVD or any existing source directory and generates the thumbnails to the target directory.
    * Thumbnails' properties such as: maximum height, maximum width or both these parameters, can be set by the user, while keeping the aspect ratio of the original photo.   
-   * Thumbnails are saved in JPG format with degree of compression set by the user.
+   * Thumbnails are saved in JPG format with a degree of compression set by the user.
    * Application accepts images in JPG and BMP formats.
    * Application gives real-time information as to the progress of the process using the total number of photos to be copied, counted beforehand.
    * Empty directories or ones containing files in unsupported formats are ignored while recreating directory structure.
@@ -66,8 +66,8 @@
    * functions converting the format and size of an image
 
    #### Choice of programming tools: #### 
-   We used wxWidgets library to create application's interface, because we already had expierience with the library and wxFormBuilder.<br>
-   For image manipulation an conversion we used FreeImage library, since it provided necessary functionality and developer friendly, extensive documentation.
+   We used wxWidgets library to create the application's interface, because we already had experience with the library and wxFormBuilder.<br>
+   For image manipulation and conversion we used FreeImage library, since it provided necessary functionality and developer friendly, extensive documentation.
 
 ---
 ## 5. Task delegation and project roadmap ##
@@ -81,8 +81,8 @@
    ### Phase 2 ###
    #### Core functionality ####
    Cloning directory tree  - Michał<br>
-   Rescaling image according to input fields - Michał<br>
-   Counting all images, and counting iamges in runtime - Mikołaj<br>
+   Resizing image according to input fields - Michał<br>
+   Counting all images, and counting images saved in runtime - Mikołaj<br>
    Checking directories for files with correct extensions and for abnormalities in paths - Mikołaj
 
    ### Phase 3 ###
@@ -90,13 +90,13 @@
    Creating contact sheets - Michał<br>
    Code refactoring - Mikołaj, Krystian, Michał<br>
    Semi-automatic mode - Mikołaj, Krystian<br>
-   Improvement on chosing the size of thumbnail - Mikołaj, Krystian<br>
+   Improvement on choosing the size of thumbnail - Mikołaj, Krystian<br>
    Getting paths to individual images - Mikołaj<br>
    Final draft of documentation - Michał
 
 ---
 ## 6. Invention and description of necessary algorithms ##
-Since a directory structure is basically a tree, we needed a tree traversal algorithm to navigate through it. The main functions traversing thorugh the structures are <b>m_CloneDir( )</b> and <b>m_IsImageToCopyInsideFolder( )</b>, both use breadth-first type search which is the most natural way of manipulating directories.<br> <b>m_CloneDir( )</b> copies subdirectories inside the source, to the target, later to be filled with copied images, then it's called again on each of the cloned subdirectories. It checks using <b>m_IsImageToCopyInsideFolder( )</b> before it's called.<br> <b>m_IsImageToCopyInsideFolder( )</b> checks whether there are any concerning us files inside a directory, if not it calls itself for every subdirectory in that directory, to find if there are any images at all in the sub-tree.
+Since a directory structure is basically a tree, we needed a tree traversal algorithm to navigate through it. The main functions traversing through the structures are <b>m_CloneDir( )</b> and <b>m_IsImageToCopyInsideFolder( )</b>, both use breadth-first type search which is the most natural way of manipulating directories.<br> <b>m_CloneDir( )</b> copies subdirectories inside the source, to the target, later to be filled with copied images, then it's called again on each of the cloned subdirectories. It checks using <b>m_IsImageToCopyInsideFolder( )</b> before it's called.<br> <b>m_IsImageToCopyInsideFolder( )</b> checks whether there are any concerning us files inside a directory, if not it calls itself for every subdirectory in that directory, to find if there are any images at all in the sub-tree.
 
 ---
 ## 7. Coding ##
@@ -104,7 +104,7 @@ Since a directory structure is basically a tree, we needed a tree traversal algo
 ##### void e_LoadFolderOnButtonClick(wxCommandEvent& event)
 Function calls m_GetFilesPaths(), and saves path to source directory, pops up a modal if it encounters an error.<br>
 ##### void e_ExportOnButtonClick(wxCommandEvent& event)
-Opens target directory and saves it's path, calls m_CloneDir() to replicate source directory tree and checks what mode is the app running in, if the mode is automatic it also calls m_SaveOneImage() for every image. If the mode is semi-automatic it calls m_GoToNextFrame().<br>
+Opens target directory and saves it's path, calls m_CloneDir() to replicate the source directory tree and checks what mode is the app running in, if the mode is automatic it also calls m_SaveOneImage() for every image. If the mode is semi-automatic it calls m_GoToNextFrame().<br>
 ##### void e_UpdateUI(wxUpdateUIEvent& event)
 Updates the interface, calls Repaint().<br>
 ##### void e_OnKeyDown(wxKeyEvent& event)
@@ -137,7 +137,7 @@ Loads an image to the display and calls m_Repaint(), if there are no more images
 ##### void m_SaveOneImage(int index)
 Saves a single rescaled image to target directory. 
 ##### void m_AddImageToContactSheet(FIBITMAP* contactSheet, FIBITMAP* bitmap, int& widthIndex, int& heightIndex)
-Adds an image to contact sheet.
+Adds an image to the contact sheet.
 ##### void m_CloneDir(wxString& source, wxString& target)
 Creates contact sheets in each directory.<br>
 Traverses through source directory tree, copying the subdirectories to target tree using both iteration and recursion.
@@ -146,7 +146,7 @@ Checks for presence of images in supported formats in a directory using both ite
 
 ---
 ## 8. Testing ##
-Testing was being done during developement process, on different PCs, using various source directories and images, at every phase of developement. It helped identify and eliminate several bugs in the application, such as an issue causing the exporting process to go endlessly when exporting directly to source directory. This approach prevented the bugs from being an underlying cause for failure of future modules.  
+Testing was being done during the development process, on different PCs, using various source directories and images, at every phase of development. It helped identify and eliminate several bugs in the application, such as an issue causing the exporting process to go endlessly when exporting directly to source directory. This approach prevented the bugs from being an underlying cause for failure of future modules.  
 
 ---
 ## 9. Deployment, report and conclusions ##
