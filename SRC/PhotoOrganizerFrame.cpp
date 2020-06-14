@@ -70,6 +70,7 @@ void PhotoOrganizerFrame::e_ExportOnButtonClick(wxCommandEvent& event)
 				{
 					m_CloneDir(m_sourcePath, m_destinationPath);
 					for (int i = 0; i < m_imagesCounter; ++i)
+						#pragma omp parallel for
 						m_SaveOneImage(i);
 					m_imagesSaved = m_imagesCounter;
 					m_progressBar->SetValue(0);
@@ -435,6 +436,7 @@ void PhotoOrganizerFrame::m_CloneDir(wxString& currPath, wxString& targetPath)
 
 		for (wxString name : files)
 		{
+			#pragma omp parallel for
 			pathToFile = currPath + '\\' + name;
 			pathToTarget = targetPath + '\\' + name;
 			bitmap = FreeImage_Load(c_formats[index], pathToFile, 0);
